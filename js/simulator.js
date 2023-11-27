@@ -100,26 +100,36 @@ class PageReplacementSimulator {
                     pageOrder.push(page);
                 }
             }
-            console.log(pageOrder)
+            // console.log(pageOrder)
             this.memoryLog.push(this.memory.slice());
         }
     }
 
     findOptimalReplacementIndex(frames, futurePages, pageOrder) {
+
+        // Premature terminate and return the oldest item in pageOrder not found in future pages
+        console.log(pageOrder)
+        for(var i in pageOrder){
+            var item = pageOrder[i];
+            if(!futurePages.includes(item)){
+                return frames.indexOf(item)
+            }
+        }
+        // If not then do regular find
+
         let farthestPage = -1;
         let indexToReplace = frames.indexOf(pageOrder[0]); // Set default index to replace as the oldest in memory
-        let farthestOccurence = futurePages.indexOf(frames[indexToReplace]);
-        if (farthestOccurence === -1) {
-            return indexToReplace;
-        }
-        for (let i = 0; i < frames.length; i++) { // Loops through the frame
-            const frame = frames[i]; //current frame in loop
-            const nextOccurrence = futurePages.indexOf(frame); // nextOccurance of current frame
+        let farthestOccurrence = futurePages.indexOf(frames[indexToReplace]);
+
+        for (let i = 0; i < frames.length; i++) {
+            const frame = frames[i];
+            const nextOccurrence = futurePages.indexOf(frame);
 
             if (nextOccurrence === -1) {
-                return i;
+                return i; // Return the first-in page if not found in future pages
             }
-            if (nextOccurrence > farthestOccurence) {
+
+            if (nextOccurrence > farthestOccurrence) {
                 farthestPage = nextOccurrence;
                 indexToReplace = i;
             }
@@ -144,7 +154,7 @@ function LRU(event) {
     // Set HTML DOM
     updateResultTable(lruSimulator);
     updateStatistics(lruSimulator);
-    console.log(lruSimulator.pageReplacementLog);
+    // console.log(lruSimulator.pageReplacementLog);
 }
 
 function Optimal(event) {
@@ -161,7 +171,7 @@ function Optimal(event) {
     // Set HTML DOM
     updateResultTable(optSimulator);
     updateStatistics(optSimulator);
-    console.log(optSimulator.pageReplacementLog);
+    console.log(optSimulator.memoryLog);
 }
 
 function updateResultTable(lruSimulator) {
