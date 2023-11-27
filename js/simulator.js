@@ -68,11 +68,12 @@ class PageReplacementSimulator {
 
     simulateOptimal(pageReferences) {
         this.references = pageReferences;
-
+        var pageOrder = []; // order of pages according to oldest in memory
         for (let i = 0; i < this.references.length; i++) {
             const page = this.references[i];
 
             if (this.memory.includes(page)) {
+                // Page hit
                 this.pageFaultLog.push("H");
                 this.pageHits++;
             } else {
@@ -82,34 +83,43 @@ class PageReplacementSimulator {
                 if (this.memory.length < this.numFrames) {
                     // Memory not full: add the page
                     this.memory.push(page);
+                    pageOrder.push(page);
                 } else {
                     // Memory full: Optimal replacement
                     const futurePages = this.references.slice(i + 1);
-                    const indexToReplace = this.findOptimalReplacementIndex(this.memory, futurePages);
+                    const indexToReplace = this.findOptimalReplacementIndex(this.memory, futurePages, pageOrder);
                     const replacedPage = this.memory[indexToReplace];
 
                     this.memory[indexToReplace] = page;
                     this.pageReplacementLog.push([parseInt(replacedPage), parseInt(page)])
+
+                    // Update page order
+                    if (replacedPage !== null && pageOrder.includes(replacedPage)) {
+                        pageOrder = pageOrder.filter(p => p !== replacedPage);
+                    }
+                    pageOrder.push(page);
                 }
             }
-
+            console.log(pageOrder)
             this.memoryLog.push(this.memory.slice());
         }
     }
 
-    findOptimalReplacementIndex(frames, futurePages) {
+    findOptimalReplacementIndex(frames, futurePages, pageOrder) {
         let farthestPage = -1;
-        let indexToReplace = -1;
-
-        for (let i = 0; i < frames.length; i++) {
-            const frame = frames[i];
-            const nextOccurrence = futurePages.indexOf(frame);
+        let indexToReplace = frames.indexOf(pageOrder[0]); // Set default index to replace as the oldest in memory
+        let farthestOccurence = futurePages.indexOf(frames[indexToReplace]);
+        if (farthestOccurence === -1) {
+            return indexToReplace;
+        }
+        for (let i = 0; i < frames.length; i++) { // Loops through the frame
+            const frame = frames[i]; //current frame in loop
+            const nextOccurrence = futurePages.indexOf(frame); // nextOccurance of current frame
 
             if (nextOccurrence === -1) {
                 return i;
             }
-
-            if (nextOccurrence > farthestPage) {
+            if (nextOccurrence > farthestOccurence) {
                 farthestPage = nextOccurrence;
                 indexToReplace = i;
             }
@@ -117,7 +127,6 @@ class PageReplacementSimulator {
 
         return indexToReplace;
     }
-    
 
 }
 
@@ -199,7 +208,7 @@ function updateResultTable(lruSimulator) {
     }
 }
 
-function updateStatistics(lruSimulator){
+function updateStatistics(lruSimulator) {
     if (!(lruSimulator instanceof PageReplacementSimulator)) {
         throw new Error('Parameter must be an instance of PageReplacementSimulator class');
     }
