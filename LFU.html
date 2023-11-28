@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LFU</title>
+    <script src="/LFU-dynamic.js" defer></script>
+    <style>
+        h1{
+            text-align: center;
+        }
+        form{
+            border: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        fieldset{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 20px;
+            border: none;
+        }
+
+        label{
+            padding:10px;
+        }
+
+        input{
+            display: block;
+            width: 400px;
+            height: 30px;
+            font-size: x-large;
+        }
+
+        button{
+            text-align: center;
+            width: 150px;
+            height: 30px;
+            border-radius: 5px;
+        }
+
+        #tableDiv{
+            margin-top: 5%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        td{
+            border: 1px solid gray;
+            width: 80px;
+            height: 25px;
+            text-align: center;
+            font-size: x-large;
+        }
+
+        p{
+            display: inline;
+            margin: 10px;
+        }
+
+        #statistics{
+            margin-top: 5%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+    </style>
+</head>
+<body>
+    <div>
+        <h1 >LFU Page Replacement Algorithm</h1>
+        <form>
+            <fieldset id="Inputs">
+                <label for="References">Reference Pages</label><input id="References" placeholder="0 2 1 6 4 0 1 0 3 1 2 1"/>
+                <label for="Frames">Number of Frames</label><input type="text" id="Frames" placeholder="3"/>
+            </fieldset>
+            <fieldset>
+                <button id="simu" onclick="LFU(event)">Simulate</button>
+            </fieldset>
+            
+        </form>
+    </div>
+    <div id="tableDiv">
+        <table id="resultTable">
+            
+        </table>
+    </div>
+    <div id="statistics">
+        <div>
+            <p>Page Hits:</p><span id="Phit"></span><p>Probability:</p><span id="Phprob"></span><p>Percentage:</p><span id="PhPerc"></span>
+        </div>
+        <div>
+            <p>Page Faults:</p><span id="Pfau"></span><p>Probability:</p><span id="Pfprob"></span><p>Percentage:</p><span id="PfPerc"></span>
+        </div>
+        
+        
+    </div>
+</body>
+</html>
